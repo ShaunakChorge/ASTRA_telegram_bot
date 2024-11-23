@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 BOT_TOKEN = '7902761696:AAF-ZcqFdOXxbRD7rc07UzvT6-jHziJ20rU'
 bot = telebot.TeleBot(BOT_TOKEN)
 
+
 # Zodiac signs and their date ranges
 ZODIAC_SIGNS = {
     "Aries": "March 21 - April 19",
