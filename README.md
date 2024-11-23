@@ -16,6 +16,11 @@ The purpose of ASTRA is to offer users personalized daily horoscopes in a user-f
 - **Requests**: For making HTTP requests to fetch horoscope data from an external API.
 - **Datetime**: To handle date and time operations effectively.
 
+
+## ⚠️ Important Warning
+This bot is set up to run locally on your machine. It will only operate live on Telegram while it is running in the background locally. Ensure that the bot remains active for users to interact with it.
+
+
 ## 📦 Installation
 1. Clone the repository:
    ```bash
