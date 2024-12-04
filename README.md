@@ -53,13 +53,17 @@ This bot is set up to run locally on your machine. It will only operate live on 
 - User: Selects "Today"
 - Bot: "✨ Horoscope for Gemini on [Today's Date] ✨..."
 
+
+## 🎥 Demo
+![image](https://github.com/user-attachments/assets/41234f01-daef-41cc-9b81-baa83b49ffd3)
+![image](https://github.com/user-attachments/assets/4cccf34d-0bfa-4e90-b446-244b73eedbde)
+
+
+
+
+
 ## 🤝 Contributing
 Contributions are welcome! If you have suggestions for improvements or additional features, feel free to open an issue or submit a pull request.
-
-
-
-
-
 
 
 #### 🌌 Wishing you a day filled with positivity and good vibes! 🌌
