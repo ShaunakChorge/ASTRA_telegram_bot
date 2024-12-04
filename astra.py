@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 BOT_TOKEN = '7902761696:AAF-ZcqFdOXxbRD7rc07UzvT6-jHziJ20rU'
 bot = telebot.TeleBot(BOT_TOKEN)
 
-
 # Zodiac signs and their date ranges
 ZODIAC_SIGNS = {
     "Aries": "March 21 - April 19",
@@ -24,7 +23,7 @@ ZODIAC_SIGNS = {
 
 # Define the valid date range
 today = datetime.now()
-max_fetch_date = today.strftime("%Y-%m-%d")  # Format: yyyy-mm-dd
+max_fetch_date = today.strftime("%Y-%m-%d")  # till today
 min_fetch_date = (today - timedelta(days=365)).strftime("%Y-%m-%d")  # One year back
 
 @bot.message_handler(commands=['start', 'hello'])
@@ -73,7 +72,7 @@ def sign_handler(message):
     bot.register_next_step_handler(sent_msg, day_handler)
 
 def day_handler(message):
-    sign = message.text.capitalize()
+    sign = message.text
     # Create a keyboard for date options
     markup = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     markup.add("Today", "Tomorrow", "Yesterday", "Specific Date (yyyy-mm-dd)")
@@ -85,34 +84,41 @@ def day_handler(message):
     sent_msg = bot.send_message(message.chat.id, text, parse_mode="Markdown", reply_markup=markup)
     bot.register_next_step_handler(sent_msg, fetch_horoscope, sign)
 
+
 def fetch_horoscope(message, sign):
     day = message.text
-    if day == "Specific Date (yyyy-mm-dd)":
-        text = "Please enter the date in the format yyyy-mm-dd. \n\nNote: The date should be in the past upto 1 Year."
+    if day == "Today":
+        day = datetime.now().strftime("%Y-%m-%d")
+    elif day == "Tomorrow":
+        day = "TOMORROW"  # Pass "TOMORROW" to the API
+    elif day == "Yesterday":
+        day = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    elif day == "Specific Date (yyyy-mm-dd)":
+        text = "Please enter the date in the format yyyy-mm-dd. \n\nNote: The date should be in the past up to 1 Year."
         sent_msg = bot.send_message(message.chat.id, text)
         bot.register_next_step_handler(sent_msg, fetch_horoscope_with_specific_date, sign)
-    else:
-        if day == "Today":
-            day = datetime.now().strftime("%Y-%m-%d")
-        elif day == "Tomorrow":
-            day = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-        elif day == "Yesterday":
-            day = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        return
 
-        if min_fetch_date <= day <= max_fetch_date:
-            horoscope = get_daily_horoscope(sign, day)
-            if horoscope.get("success"):
-                data = horoscope["data"]
-                horoscope_message = (
+    # Ensure the date is within the valid range for Today, Yesterday, and Specific Date
+    if day in ["TOMORROW", "Today", "Yesterday"] or (min_fetch_date <= day <= max_fetch_date):
+        horoscope = get_daily_horoscope(sign, day)
+        if horoscope.get("success"):
+            data = horoscope["data"]
+            horoscope_message = (
                     f"✨ *Horoscope for {sign} on {data['date']}* ✨\n\n"
                     f"{data['horoscope_data']}\n\n"
                     "🌌 Wishing you a day filled with positivity and good vibes! 🌌"
                 )
-                bot.send_message(message.chat.id, horoscope_message, parse_mode="Markdown")
-            else:
-                bot.send_message(message.chat.id, "⚠️ Sorry, I couldn't retrieve the horoscope. \n Please try again later.")
+            bot.send_message(message.chat.id, "Here's your horoscope!")
+            bot.send_message(message.chat.id, horoscope_message, parse_mode="Markdown")
         else:
-            bot.send_message(message.chat.id, f"⚠️ Sorry, your date is out of Range [ {min_fetch_date}   to   {max_fetch_date} ]. \n Please try again later.")
+            # Log the response for debugging
+            print(f"Horoscope API response: {horoscope}")
+            bot.send_message(message.chat.id, "⚠️ Sorry, I couldn't retrieve the horoscope. Please try again later.")
+    else:
+        bot.send_message(message.chat.id, f"⚠️ Sorry, your date is out of Range [ {min_fetch_date}   to   {max_fetch_date} ]. \n Please try again later.")
+
+
 
 def fetch_horoscope_with_specific_date(message, sign):
     day = message.text
